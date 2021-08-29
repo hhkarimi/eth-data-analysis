@@ -3,6 +3,11 @@ Project description.
 
 ## Running the code
 
+
+Automate with `cron` by adding the following to `crontab -e`:
+```sh
+    0 */1 * * * cd /path/to/repo/scripts && /path/to/python data_refresh.py > path/to/logs 2>&1
+```
 ## TODO
 * Automate the ETL job in an Airflow DAG
     * Easy to backfill, easy to schedule, easy to turn on/off
