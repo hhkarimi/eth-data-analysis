@@ -1,6 +1,7 @@
 ## import libraries
 from google.cloud import bigquery
 from google.api_core.exceptions import Conflict
+from datetime import datetime
 import numpy as np
 import os
 import pandas as pd
@@ -11,6 +12,11 @@ import time
 ## import configuration
 sys.path.append('..')
 from config.addresses import addresses
+
+## print start of job
+now = datetime.now()
+dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+print("Starting LINK transactions ETL job at", dt_string)
 
 ## define etherscan API
 etherscan_api_url = 'https://api.etherscan.io/api'
@@ -192,3 +198,9 @@ for row in query_results.result():
 end_time = time.time()
 print("completed in {:0.2f} minutes".format((end_time-start_time)/60))
 print(f"There are a total of {len(results_df)} rows in the table.")
+
+## print successful completion
+now = datetime.now()
+dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+print("Successfully completed LINK transaction ETL job at", dt_string)
+print('='*70)
