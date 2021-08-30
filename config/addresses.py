@@ -1,5 +1,5 @@
 ## top eth accounts by balance: https://etherscan.io/accounts
-
+## top LINK accounts by balance: https://etherscan.io/token/0x514910771af9ca656af840dff83e8264ecf986ca#balances
 addresses = {
 #     'vitalik_presumably': '0x05a56e2d52c817161883f50c441c3228cfe54d9f', # the first miner block
 #     'chainlink_erc20': '0x514910771af9ca656af840dff83e8264ecf986ca',
@@ -27,4 +27,8 @@ addresses = {
     'aggregator_15': '0x7009033C0d6702fd2dfAD3478d2AE4e3b6aCB966',
     'aggregator_16': '0x5259AA3b262B3390EEef0A6E7b89C08d60c94622',
     'aggregator_17': '0x989B836D68700DA948B5c04A65b3bBA39F400ad7',
+#     'sushi_swap': '0xc40d16476380e4037e6b1a2594caf6a6cc8da967',
+#     'avalance_bridge': '0xe78388b4ce79068e89bf8aa7f218ef6b9ab0e9d0',
+#     'aave_pool': '0x3dfd23a6c5e8bbcfc9581d2e864a68feb6a076d3',
+#     'uniswap_v3': '0xa6cc3c2531fdaa6ae1a3ca84c2855806728693e8'
 }
