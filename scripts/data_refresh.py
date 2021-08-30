@@ -16,6 +16,7 @@ from config.addresses import addresses
 ## print start of job
 now = datetime.now()
 dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+print('='*70)
 print("Starting LINK transactions ETL job at", dt_string)
 
 ## define etherscan API
@@ -105,7 +106,7 @@ for name, address in addresses.items():
             'TokenName': transaction['tokenName'],
             'TokenSymbol': transaction['tokenSymbol'],
             }, ignore_index=True)
-    time.sleep(0.2)
+    time.sleep(1)
 end_time = time.time()
 print("completed in {:0.2f} minutes".format((end_time-start_time)/60))
 
@@ -203,4 +204,3 @@ print(f"There are a total of {len(results_df)} rows in the table.")
 now = datetime.now()
 dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
 print("Successfully completed LINK transaction ETL job at", dt_string)
-print('='*70)
