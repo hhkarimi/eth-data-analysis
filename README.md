@@ -32,30 +32,30 @@ The ETL cycle is shown in its entirety below.
 
 <img src="./images/architecture.svg" alt="ETL architecture" width="600" class="center"/>
 
-It starts with pulling the data from the [Etherscan APIs](https://docs.etherscan.io/api-endpoints/accounts), which includes protocols to explore normal, internal, and ERC20 or ERC721 token transactions. For the list of addresses under consideration, most of the interesting data found relates to ERC20 LINK token transfers. As Chainlink nodes fulfull order requests to submit data, there is possibly useful insight to be gained from investigating the normal transactions more deeply, however Etherscan APIs do not reveal much state information.
+It starts with pulling the data from the [Etherscan APIs](https://docs.etherscan.io/api-endpoints/accounts), which include protocols to explore normal, internal, and ERC20 or ERC721 token transactions. For the list of addresses under consideration, most of the interesting data found relates to ERC20 LINK token transfers. As Chainlink nodes fulfull order requests to submit data, there is possibly useful insight to be gained from investigating the normal transactions as well, however Etherscan APIs do not reveal much state information.
 
 Once the data is pulled to the local machine, it is processed in `pandas` to compute the direction of transfer, transaction fee (from gas and gas price) and the running balance.
 
-Next we create a dataset and table in BigQuery and push the local data to the cloud using GCP [client libraries for python](https://cloud.google.com/python/docs/reference). The dashboards are then created in Data Studio after connecting the Big Query table to a report. This is all done graphically, though similar static visualizations are constructed with code in `notebooks/02-visualizations.ipynb`.
+Next we create a dataset and table in BigQuery and push the local data to the cloud using GCP [client libraries for python](https://cloud.google.com/python/docs/reference). The dashboards are then created in Data Studio after connecting the Big Query table to a report. This is all done through a GUI, though similar static visualizations are constructed with code in `notebooks/02-visualizations.ipynb`.
 
-An issue with the Etherscan API is that ERC20 token requests cannot be limited by either timestamp or block height, so everytime the ETL job runs we pull the full history of transfers, only limited to the 10,000 count enforced by the API. After sending this full list of rows to Big Query, we run a query that deduplicates rows by replacing the existing table with a new one which only selects for single instances of all transaction attributes.
+An issue with the Etherscan API is that ERC20 token requests cannot be limited by either timestamp or block height, so every time the ETL job runs we pull the full history of transfers, only limited to the 10,000 count enforced by the API. After sending this full list of rows to Big Query, we run a query that deduplicates rows by replacing the existing table with a new one which only selects for single instances of all transaction attributes.
 
 A cron job automates this process on an hourly schedule.
 
 ## Instructions
-Initial development was completed through the ordered `notebooks`. These can be run in sequential order to run through the full ETL pipeline and includes `matplotlib` code to produce many of the same charts constructed in the Data Studio report. The code in the notebooks were then copied over to `scripts/data_refresh.py` for simplicity.
+Initial development was completed through the ordered `notebooks`. These can be executed sequence to run through the full ETL pipeline and include `matplotlib` code to produce many of the same charts constructed in the Data Studio report. The code in the notebooks were then copied over to `scripts/data_refresh.py` for simplicity.
 
-To schedule an hourly data refresh with `cron`, add the following to `crontab -e`:
+To schedule an hourly data refresh with `cron`, add the following to `crontab`:
 ```sh
     0 */1 * * * cd /path/to/repo/scripts && /path/to/python data_refresh.py > path/to/logs 2>&1
 ```
 ## Potential Improvements
 * Automate the ETL job in an Airflow DAG
     * Easy to backfill, easy to schedule, easy to turn on/off
-* At the start of each job, lookup last block height of a transaction given an account for more efficient data pull
+* At the start of each job, lookup last block height of a transaction for each account to achieve more efficient data pulls
     * Etherscan API for ERC-20 transactions doesn't seem to support this
     * Running an ethereum node would resolve this
-* Normalize transaction fees for token transfers by account multiple transfers in a single token transaction.
+* Normalize transaction fees for token transfers by accounting for multiple transfers ocurring in a single token transaction
     * This feature doesn't seem to be supported by Etherscan. The `internal` transaction API is returning empty (https://docs.etherscan.io/api-endpoints/accounts#get-internal-transactions-by-transaction-hash)
 * Consider running an ethereum node to host the data rather than pulling from Etherscan to avoid limits
     * Would also allow deeper exploration of `normal` transactions and state updates which include the ability to evaluate data submissions
